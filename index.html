@@ -45,9 +45,7 @@
         // add controls
         cameraControl = new THREE.OrbitControls(camera);
 
-        var scale = chroma.scale(['blue', 'green', 'red']).domain([0,10]);
-
-        function create3DTerrain(height) {
+        function create3DTerrain() {
             var plane = new THREE.PlaneGeometry(120, 100, 100, 100);
 
             for (var i = 0; i < plane.vertices.length; i++) {
@@ -60,14 +58,32 @@
             plane.computeFaceNormals();
 
             var mat = new THREE.MeshPhongMaterial();
-            mat.map = THREE.ImageUtils.loadTexture("Fichiers/textures/general/floor-wood.jpg");
+
+            //mat.map = THREE.ImageUtils.loadTexture("Fichiers/textures/general/floor-wood.jpg");
+
+            
+            mat.vertexColors = THREE.FaceColors;
+            mat.shading = THREE.NoShading
+
+            for (var i = 0; i < plane.faces.length; i++) {
+            	if (plane.vertices[plane.faces[i].a].z <= 3) {
+            		plane.faces[i].color = new THREE.Color("#32cd32");
+            	}
+            	else if (plane.vertices[plane.faces[i].a].z > 3 && plane.vertices[plane.faces[i].a].z <= 6) {
+            		plane.faces[i].color = new THREE.Color("#e5ad00");
+            	}
+            	else {
+            		plane.faces[i].color = new THREE.Color(0xff0000);
+            	}
+            }
+			
 
             var groundMesh = new THREE.Mesh(plane, mat);
 
             scene.add(groundMesh);
         }
 
-        create3DTerrain(100);
+        create3DTerrain();
 
         // create a render, sets the background color and the size
         renderer = new THREE.WebGLRenderer();
